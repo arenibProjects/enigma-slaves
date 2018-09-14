@@ -6,7 +6,7 @@
 
 IntervalTimer controlTimer;
 Coders coders(33,34,35,36);
-Odometry odometry(1000,1000,0,265.0,16.0,20000);
+Odometry odometry(0,0,0,265.0,16.0,20000);
 DifferentialController controller(10,0,0,100,0,0);
 Motor leftMotor(2,3,4);
 Motor rightMotor(5,6,7);

@@ -17,7 +17,7 @@ PID::PID(double * iinput, double * isetpoint,double * ioutput,double ikp,double 
   prevE=0;
   integ=0;
 }
-void PID::compute(bool isFacingFront){
+void PID::compute(){
   double E=*setpoint-*input;
   long T=micros();
   double dt=T-prevT;
@@ -28,7 +28,7 @@ void PID::compute(bool isFacingFront){
   else deriv=(E-prevE)/dt;
   prevT=T;
   prevE=E;
-  *output=kp*E+ki*integ+kd*deriv*(isFacingFront?1.0:-1.0);
+  *output=kp*E+ki*integ+kd*deriv;
 }
 void PID::set(double ikp,double iki,double ikd){
   kp=ikp;

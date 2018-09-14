@@ -6,7 +6,7 @@ class PID
 {
   public:
     PID(double * iinput, double * isetpoint,double * ioutput,double ikp,double iki,double ikd);
-    void compute(bool isFacingFront);
+    void compute();
     void set(double kp,double ki,double kd);
     double getP();
     double getI();
