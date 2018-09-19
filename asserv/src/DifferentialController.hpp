@@ -11,6 +11,7 @@ class DifferentialController{
     int getRight();
     void setFactors(double dp,double di,double dd,double ap,double ai,double ad);
     double getFactor(int i);
+    void debug();
     void reset();
   private:
     PID *distancePID;

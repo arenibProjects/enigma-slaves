@@ -13,6 +13,10 @@ double cap(double in,double c){
   else return in;
 }
 
+void DifferentialController::debug(){
+  anglePID->printDebug();
+}
+
 DifferentialController::DifferentialController(double dp,double di,double dd,double ap,double ai,double ad){
   distancePID = new PID(&din,&dtar,&dout,dp,di,dd);
   anglePID = new CuPID(&ain,&atar,&aout,ap,ai,ad);
@@ -24,8 +28,9 @@ void DifferentialController::update(double x,double y, double a){
   double cd=sqrt(pow(tx-x,2)+pow(ty-y,2));
   double ca=atan2(ty-y,tx-x);
   //angle
-  if(cd>1) atar=ca;
-  else atar=ta;
+  /*if(cd>1) atar=ca;
+  else atar=ta;*/
+  atar = ta; //TODO: surveiller
   ain=a;
   anglePID->compute();
 
@@ -42,6 +47,7 @@ void DifferentialController::update(double x,double y, double a){
     reduc = 1;
   }
 }
+
 void DifferentialController::setTarget(double x,double y, double a){
   tx=x;
   ty=y;
@@ -49,25 +55,19 @@ void DifferentialController::setTarget(double x,double y, double a){
 }
 
 int DifferentialController::getLeft(){
-  if(reduc != 1){
-    return max(-MAX_PWM, min(reduc*(dout*balance+aout*(1-balance)), MAX_PWM));
-  }else{
-    return max(-MAX_PWM, min(reduc*(dout+aout), MAX_PWM));
-  }
+  return max(-MAX_PWM, min(-aout, MAX_PWM));
 }
 
 int DifferentialController::getRight(){
-  if(reduc != 1){
-    return max(-MAX_PWM, min(reduc*(dout*balance-aout*(1-balance)), MAX_PWM));
-  }else{
-    return max(-MAX_PWM, min(reduc*(dout-aout), MAX_PWM));
-  }
+  return max(-MAX_PWM, min(+aout, MAX_PWM));
   // - aout
 }
+
 void DifferentialController::setFactors(double dp,double di,double dd,double ap,double ai,double ad){
   distancePID->set(dp,di,dd);
   anglePID->set(ap,ai,ad);
 }
+
 double DifferentialController::getFactor(int i){
   if(i==0) return distancePID->getP();
   if(i==1) return distancePID->getI();
@@ -77,6 +77,7 @@ double DifferentialController::getFactor(int i){
   if(i==5) return anglePID->getD();
   return 0;
 }
+
 void DifferentialController::reset(){
   distancePID->reset();
   anglePID->reset();

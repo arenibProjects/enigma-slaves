@@ -7,7 +7,7 @@
 IntervalTimer controlTimer;
 Coders coders(33,34,35,36);
 Odometry odometry(0,0,0,265.0,16.0,20000);
-DifferentialController controller(10,0,0,100,0,0);
+DifferentialController controller(10,0,0,500,0.00001,700);
 Motor leftMotor(2,3,4);
 Motor rightMotor(5,6,7);
 bool forward = true;
@@ -24,7 +24,8 @@ void setup(){
 }
 
 void loop(){
-  delay(2000);
+  delay(100);
+  controller.debug();
   /*
   if(odometry.getX()>100){
     forward = false;
