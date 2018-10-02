@@ -38,8 +38,9 @@ CuPID::CuPID(double * iinput, double * isetpoint, double * ioutput,double ikp,do
 }
 
 double deriv;
+double E;
 void CuPID::compute(){
-  double E = getError(*input, *setpoint);
+  E = getError(*input, *setpoint);
   long T=micros();
   double dt=T-prevT;
   if(prevT==-1) dt=0;
@@ -50,16 +51,22 @@ void CuPID::compute(){
   prevE=E;
   *output=kp*E+ki*integ+kd*deriv;
   // Zone morte
-  if(abs(*output) >= MIN_ZERO_POWER && abs(*output)<MAX_ZERO_POWER){
-    if(*output>0){
-      *output=MAX_ZERO_POWER;
+  if(abs(*output)<CUPID_MAX_ZERO_POWER){
+    if(abs(*output) >= CUPID_MIN_ZERO_POWER){
+      if(*output>0){
+        *output=CUPID_MAX_ZERO_POWER;
+      }else{
+        *output=-CUPID_MAX_ZERO_POWER;
+      }
     }else{
-      *output=-MAX_ZERO_POWER;
+      *output = 0;
     }
   }
   if(debug){
-    Serial.println(String(kp*E) + " " + String(*input) + " " + String(*setpoint) + " " + String(kd*deriv));
+    //Serial.println(String(kp*E) + " " + String(*input) + " " + String(*setpoint) + " " + String(kd*deriv));
     debug = false;
+
+    Serial.println(abs(E)<pi/2?"droit devant!!":"derrière!");
   }
   // stabilisateur expérimental
   /*if(deriv<5){
@@ -72,8 +79,9 @@ void CuPID::printDebug(){
 }
 
 bool CuPID::isFacingFront(){
-  return abs(*setpoint-*input)<pi;
+  return abs(E)<pi/2;
 }
+
 void CuPID::set(double ikp,double iki,double ikd){
   kp=ikp;
   ki=iki;

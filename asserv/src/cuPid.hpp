@@ -2,9 +2,10 @@
 #ifndef CUPID_H
 #define CUPID_H
 
-#define MIN_ZERO_POWER 2
-#define MAX_ZERO_POWER 130
-
+// 2
+#define CUPID_MIN_ZERO_POWER 0
+#define CUPID_MAX_ZERO_POWER 0
+// 2-120
 class CuPID
 {
   public:
